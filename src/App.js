@@ -25,7 +25,7 @@ const App=()=> {
       "imageUrl": "https://i.ibb.co/GCCdy8t/womens.png"
     },
     {
-      "id": 5,
+      "id": 6,
       "title": "mens",
       "imageUrl": "https://i.ibb.co/R70vBrQ/men.png"
     }
