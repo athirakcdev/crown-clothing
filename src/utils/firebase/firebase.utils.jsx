@@ -1,6 +1,7 @@
 import {initializeApp} from "firebase/app"
-import {getAuth,signInWithRedirect,signInWithPopup,GoogleAuthProvider} from "firebase/auth"
+import {getAuth,signInWithPopup,GoogleAuthProvider, signInWithEmailAndPassword, signOut} from "firebase/auth"
 import { getFirestore,doc,getDoc,setDoc} from "firebase/firestore"
+import { createUserWithEmailAndPassword } from "firebase/auth";
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBmWr6u4HhfLQ5BzgXn_DlP8KQkPqyOnV4",
@@ -14,16 +15,17 @@ const firebaseConfig = {
   // Initialize Firebase
   const firebaseApp = initializeApp(firebaseConfig);
 
-  const provider=new GoogleAuthProvider()
-  provider.setCustomParameters({
+  const googleProvider=new GoogleAuthProvider()
+  googleProvider.setCustomParameters({
     prompt: "select_account",
   })
+ 
   export const auth=getAuth()
 
-  export const signInWithGooglePopup=()=>signInWithPopup(auth,provider)
+  export const signInWithGooglePopup=()=>signInWithPopup(auth,googleProvider)
 
   export const db = getFirestore()
-  export const createUserDocumentFromAuth=async(userAuth)=>{
+  export const createUserDocumentFromAuth=async(userAuth,additionalFields={})=>{
       const userDocRef= doc(db,"users",userAuth.uid)
       console.log(userDocRef)
       const userSnapShot = await getDoc(userDocRef)
@@ -34,7 +36,8 @@ const firebaseConfig = {
             await setDoc(userDocRef,{
                displayName,
                email,
-               createdAt
+               createdAt,
+               ...additionalFields
             })
         }
         catch(error){
@@ -43,5 +46,19 @@ const firebaseConfig = {
       }
       return userDocRef
   }
+  export const createUserAuthWithEmailAndPassword = async(email,password)=>{
+      if(!email || !password) return
+      return await createUserWithEmailAndPassword(auth,email,password)
+
+  }
+  export const SignInUserWithEmailAndPassword = async(email,password)=>{
+    if(!email || !password) return
+    return await signInWithEmailAndPassword(auth,email,password)
+
+} 
+  
+export const signOutUser = async ()=>{
+   await signOut(auth)
+}
 
       
